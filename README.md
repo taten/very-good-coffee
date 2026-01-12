@@ -4,7 +4,8 @@ A Flutter coffee browsing app built with **Very Good Ventures architecture** pri
 
 ## Considerations
 
-Since this is a test project and it's not published to any app stores, not using any sectrests or using any APIs/Databeses to store data the app runs entirely locally. This means a CI/CD pipeline script to deploy doesn't make a lot of sense which is why i did not include it. I focused mostly on trying to follow the VGV architecture from the docs provided and creating a fun user experience for the requirement, not necesarily the most performant or enterprise-ready solution :smiley:
+Since this is a test project and it's not published to any app stores, not using any secrets or using any APIs/Databases to store data, the app runs entirely locally. This means a CI/CD pipeline script to deploy doesn't make a lot of sense which is why i did not include a script for it. I focused mostly on trying to follow the VGV architecture from the docs provided and creating a fun user experience for the requirement, not necessarily the most performant or enterprise-ready solution :smiley:
+
 
 
 ##  Features
