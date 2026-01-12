@@ -29,7 +29,7 @@ jobs:
       run: flutter test
 
     - name: Build web
-      run: flutter build web --release --base-href "/very_good_coffee/"
+      run: flutter build web --release --base-href "/very-good-coffee/"
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
