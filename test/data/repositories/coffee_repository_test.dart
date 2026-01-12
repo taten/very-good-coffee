@@ -52,7 +52,7 @@ void main() {
         final result = await repository.getRandomCoffee();
 
         // Assert
-        expect(result.imageUrl, testFileUrl);
+        expect(result.imageUrl, 'https://corsproxy.io/?$testFileUrl');
         expect(result.isFavorite, true);
         verify(() => mockRemoteDataSource.fetchRandomCoffee()).called(1);
         verify(() => mockLocalDataSource.isFavorite(any())).called(1);
@@ -90,9 +90,9 @@ void main() {
       test('should return list of coffees with favorite status', () async {
         // Arrange
         final testDtos = [
-          const CoffeeDto(file: 'https://coffee.alexflipnote.dev/1.jpg'),
-          const CoffeeDto(file: 'https://coffee.alexflipnote.dev/2.jpg'),
-          const CoffeeDto(file: 'https://coffee.alexflipnote.dev/3.jpg'),
+          const CoffeeDto(file: 'https://corsproxy.io/?https://coffee.alexflipnote.dev/1.jpg'),
+          const CoffeeDto(file: 'https://corsproxy.io/?https://coffee.alexflipnote.dev/2.jpg'),
+          const CoffeeDto(file: 'https://corsproxy.io/?https://coffee.alexflipnote.dev/3.jpg'),
         ];
 
         when(() => mockRemoteDataSource.fetchMultipleCoffees(3))
@@ -105,9 +105,9 @@ void main() {
 
         // Assert
         expect(result.length, 3);
-        expect(result[0].imageUrl, testDtos[0].file);
-        expect(result[1].imageUrl, testDtos[1].file);
-        expect(result[2].imageUrl, testDtos[2].file);
+        expect(result[0].imageUrl, 'https://corsproxy.io/?${testDtos[0].file}');
+        expect(result[1].imageUrl, 'https://corsproxy.io/?${testDtos[1].file}');
+        expect(result[2].imageUrl, 'https://corsproxy.io/?${testDtos[2].file}');
         verify(() => mockRemoteDataSource.fetchMultipleCoffees(3)).called(1);
         verify(() => mockLocalDataSource.isFavorite(any())).called(3);
       });

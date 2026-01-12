@@ -27,7 +27,7 @@ void main() {
 
       final entity = dto.toEntity();
 
-      expect(entity.imageUrl, testFileUrl);
+      expect(entity.imageUrl, 'https://corsproxy.io/?$testFileUrl');
       expect(entity.isFavorite, false);
       expect(entity.id, isNotEmpty);
     });
@@ -37,14 +37,15 @@ void main() {
 
       final entity = dto.toEntity(isFavorite: true);
 
-      expect(entity.imageUrl, testFileUrl);
+      expect(entity.imageUrl, 'https://corsproxy.io/?$testFileUrl');
       expect(entity.isFavorite, true);
     });
 
     test('should create DTO from entity', () {
+      const proxiedUrl = 'https://corsproxy.io/?$testFileUrl';
       const entity = Coffee(
         id: '123',
-        imageUrl: testFileUrl,
+        imageUrl: proxiedUrl,
         isFavorite: true,
       );
 
