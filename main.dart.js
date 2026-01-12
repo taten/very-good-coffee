@@ -70359,7 +70359,7 @@ A.T2.prototype={
 uz(){var s=0,r=A.L(t.If),q,p,o
 var $async$uz=A.M(function(a,b){if(a===1)return A.I(b,r)
 for(;;)switch(s){case 0:s=3
-return A.F(A.aDd(A.fN("https://coffee.alexflipnote.dev/random.json")),$async$uz)
+return A.F(A.aDd(A.fN("https://corsproxy.io/?https://coffee.alexflipnote.dev/random.json")),$async$uz)
 case 3:p=b
 o=p.b
 if(o===200){q=new A.oE(A.c_(t.a.a(B.aM.dL(A.aCV(A.aAG(p.e)).dL(p.w))).i(0,"file")))
@@ -70415,7 +70415,7 @@ case 4:if(!o.n()){s=5
 break}m=o.gI().a
 l=B.h.j(B.c.gt(m))
 i=j
-h=new A.db(l,m,!1)
+h=new A.db(l,"https://corsproxy.io/?"+m,!1)
 s=6
 return A.F(n.ve(l),$async$m_)
 case 6:i.push(h.Ar(c))
