@@ -9,7 +9,11 @@ class CoffeeRemoteDataSource {
 
   /// Fetches a single random coffee image from the API
   Future<CoffeeDto> fetchRandomCoffee() async {
-    final response = await http.get(Uri.parse('$_baseUrl/random.json'));
+    // Add timestamp to prevent CORS proxy from caching responses
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final response = await http.get(
+      Uri.parse('$_baseUrl/random.json?t=$timestamp'),
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as Map<String, dynamic>;
