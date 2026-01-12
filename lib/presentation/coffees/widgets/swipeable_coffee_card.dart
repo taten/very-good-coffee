@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../data/models/coffee.dart';
+import '../../../domain/entities/coffee.dart';
 
 class SwipeableCoffeeCard extends StatefulWidget {
   final Coffee coffee;

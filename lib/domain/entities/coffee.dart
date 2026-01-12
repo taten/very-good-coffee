@@ -1,9 +1,13 @@
-class Coffee {
+import 'package:equatable/equatable.dart';
+
+/// Domain entity representing a coffee image.
+/// This is the business logic representation, separate from API models.
+class Coffee extends Equatable {
   final String id;
   final String imageUrl;
   final bool isFavorite;
 
-  Coffee({
+  const Coffee({
     required this.id,
     required this.imageUrl,
     this.isFavorite = false,
@@ -21,19 +25,6 @@ class Coffee {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'imageUrl': imageUrl,
-      'isFavorite': isFavorite,
-    };
-  }
-
-  factory Coffee.fromJson(Map<String, dynamic> json) {
-    return Coffee(
-      id: json['id'] as String,
-      imageUrl: json['imageUrl'] as String,
-      isFavorite: json['isFavorite'] as bool? ?? false,
-    );
-  }
+  @override
+  List<Object?> get props => [id, imageUrl, isFavorite];
 }

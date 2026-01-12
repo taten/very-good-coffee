@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'browse_screen.dart';
-import 'favorites_screen.dart';
+import 'coffees/widgets/browse_screen.dart';
+import 'coffees/widgets/favorites_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

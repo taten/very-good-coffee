@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../services/coffee_service.dart';
-import '../widgets/swipeable_coffee_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../business_logic/coffee_bloc.dart';
+import '../business_logic/coffee_event.dart';
+import '../business_logic/coffee_state.dart';
+import 'swipeable_coffee_card.dart';
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
@@ -19,7 +21,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
     // Load initial coffees
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CoffeeService>().loadBrowseCoffees(count: 10);
+      context.read<CoffeeBloc>().add(const LoadBrowseCoffees(count: 10));
     });
   }
 
@@ -27,11 +29,10 @@ class _BrowseScreenState extends State<BrowseScreen> {
     _moveToNextCard();
   }
 
-  void _onSwipeRight() {
-    final coffeeService = context.read<CoffeeService>();
-    if (_currentIndex < coffeeService.browseCoffees.length) {
-      final coffee = coffeeService.browseCoffees[_currentIndex];
-      coffeeService.toggleFavorite(coffee);
+  void _onSwipeRight(CoffeeLoaded state) {
+    if (_currentIndex < state.browseCoffees.length) {
+      final coffee = state.browseCoffees[_currentIndex];
+      context.read<CoffeeBloc>().add(ToggleFavorite(coffee));
     }
     _moveToNextCard();
   }
@@ -42,9 +43,10 @@ class _BrowseScreenState extends State<BrowseScreen> {
     });
 
     // Load more coffees when running low
-    final coffeeService = context.read<CoffeeService>();
-    if (_currentIndex >= coffeeService.browseCoffees.length - 3) {
-      coffeeService.loadMoreCoffees(count: 5);
+    final bloc = context.read<CoffeeBloc>();
+    final state = bloc.state;
+    if (state is CoffeeLoaded && _currentIndex >= state.browseCoffees.length - 3) {
+      bloc.add(const LoadMoreCoffees(count: 5));
     }
   }
 
@@ -52,7 +54,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
     setState(() {
       _currentIndex = 0;
     });
-    await context.read<CoffeeService>().loadBrowseCoffees(count: 10);
+    context.read<CoffeeBloc>().add(const LoadBrowseCoffees(count: 10));
   }
 
   @override
@@ -62,16 +64,15 @@ class _BrowseScreenState extends State<BrowseScreen> {
         title: const Text('Browse Coffee'),
         elevation: 2,
       ),
-      body: Consumer<CoffeeService>(
-        builder: (context, coffeeService, child) {
-          if (coffeeService.isLoading && coffeeService.browseCoffees.isEmpty) {
+      body: BlocBuilder<CoffeeBloc, CoffeeState>(
+        builder: (context, state) {
+          if (state is CoffeeLoading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          if (coffeeService.error != null &&
-              coffeeService.browseCoffees.isEmpty) {
+          if (state is CoffeeError && state.browseCoffees.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +84,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    coffeeService.error!,
+                    state.message,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 16),
                   ),
@@ -98,7 +99,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
             );
           }
 
-          if (_currentIndex >= coffeeService.browseCoffees.length) {
+          if (state is! CoffeeLoaded) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (_currentIndex >= state.browseCoffees.length) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +154,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     children: [
                       // Show next 2 cards behind the current one for depth
                       for (int i = _currentIndex + 2; i >= _currentIndex; i--)
-                        if (i < coffeeService.browseCoffees.length)
+                        if (i < state.browseCoffees.length)
                           Positioned(
                             top: (i - _currentIndex) * 10.0,
                             child: Transform.scale(
@@ -157,12 +162,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
                               child: Opacity(
                                 opacity: 1 - (i - _currentIndex) * 0.3,
                                 child: SwipeableCoffeeCard(
-                                  coffee: coffeeService.browseCoffees[i],
+                                  coffee: state.browseCoffees[i],
                                   onSwipeLeft: i == _currentIndex
                                       ? _onSwipeLeft
                                       : () {},
                                   onSwipeRight: i == _currentIndex
-                                      ? _onSwipeRight
+                                      ? () => _onSwipeRight(state)
                                       : () {},
                                   isTopCard: i == _currentIndex,
                                 ),
@@ -195,7 +200,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                       FloatingActionButton.large(
                         heroTag: 'favorite',
                         backgroundColor: Colors.white,
-                        onPressed: _onSwipeRight,
+                        onPressed: () => _onSwipeRight(state),
                         child: const Icon(
                           Icons.star,
                           size: 40,

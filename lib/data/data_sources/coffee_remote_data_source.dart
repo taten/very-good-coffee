@@ -1,31 +1,27 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/coffee.dart';
+import '../models/coffee_dto.dart';
 
+/// Remote data source for fetching coffee images from the API.
+/// Only responsible for API calls and returning DTOs.
 class CoffeeRemoteDataSource {
   static const String _baseUrl = 'https://coffee.alexflipnote.dev';
 
-  Future<Coffee> fetchRandomCoffee() async {
+  /// Fetches a single random coffee image from the API
+  Future<CoffeeDto> fetchRandomCoffee() async {
     final response = await http.get(Uri.parse('$_baseUrl/random.json'));
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final imageUrl = data['file'] as String;
-
-      // Generate a unique ID from the image URL
-      final id = imageUrl.split('/').last.split('.').first;
-
-      return Coffee(
-        id: id,
-        imageUrl: imageUrl,
-      );
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      return CoffeeDto.fromJson(data);
     } else {
-      throw Exception('Failed to load coffee image');
+      throw Exception('Failed to load coffee image: ${response.statusCode}');
     }
   }
 
-  Future<List<Coffee>> fetchMultipleCoffees(int count) async {
-    final List<Coffee> coffees = [];
+  /// Fetches multiple random coffee images from the API
+  Future<List<CoffeeDto>> fetchMultipleCoffees(int count) async {
+    final List<CoffeeDto> coffees = [];
 
     for (int i = 0; i < count; i++) {
       try {

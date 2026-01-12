@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'services/coffee_service.dart';
-import 'presentation/screens/home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'presentation/coffees/business_logic/coffee_bloc.dart';
+import 'data/data_sources/coffee_local_data_source.dart';
+import 'data/data_sources/coffee_remote_data_source.dart';
+import 'data/repositories/coffee_repository.dart';
+import 'presentation/home_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -12,8 +15,16 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => CoffeeService(),
+    // Dependency injection setup
+    final remoteDataSource = CoffeeRemoteDataSource();
+    final localDataSource = CoffeeLocalDataSource();
+    final repository = CoffeeRepository(
+      remoteDataSource: remoteDataSource,
+      localDataSource: localDataSource,
+    );
+
+    return BlocProvider(
+      create: (context) => CoffeeBloc(repository: repository),
       child: MaterialApp(
         title: 'Very Good Coffee',
         debugShowCheckedModeBanner: false,

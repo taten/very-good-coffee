@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../services/coffee_service.dart';
-import '../widgets/coffee_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../business_logic/coffee_bloc.dart';
+import '../business_logic/coffee_event.dart';
+import '../business_logic/coffee_state.dart';
+import '../../../domain/entities/coffee.dart';
+import 'coffee_card.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -17,12 +20,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
     // Load favorites when screen is created
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CoffeeService>().loadFavorites();
+      context.read<CoffeeBloc>().add(const LoadFavorites());
     });
   }
 
   Future<void> _onRefresh() async {
-    await context.read<CoffeeService>().loadFavorites();
+    context.read<CoffeeBloc>().add(const LoadFavorites());
   }
 
   @override
@@ -32,15 +35,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         title: const Text('Favorites'),
         elevation: 2,
       ),
-      body: Consumer<CoffeeService>(
-        builder: (context, coffeeService, child) {
-          if (coffeeService.favorites.isEmpty) {
+      body: BlocBuilder<CoffeeBloc, CoffeeState>(
+        builder: (context, state) {
+          final favorites = state is CoffeeLoaded ? state.favorites : <Coffee>[];
+
+          if (favorites.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.favorite_border,
+                    Icons.star_border,
                     size: 64,
                     color: Colors.grey[400],
                   ),
@@ -76,13 +81,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 mainAxisSpacing: 8,
                 childAspectRatio: 0.75,
               ),
-              itemCount: coffeeService.favorites.length,
+              itemCount: favorites.length,
               itemBuilder: (context, index) {
-                final coffee = coffeeService.favorites[index];
+                final coffee = favorites[index];
                 return CoffeeCard(
                   coffee: coffee,
                   onFavoriteToggle: () {
-                    coffeeService.toggleFavorite(coffee);
+                    context.read<CoffeeBloc>().add(ToggleFavorite(coffee));
                   },
                 );
               },

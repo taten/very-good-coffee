@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/models/coffee.dart';
+import '../../../domain/entities/coffee.dart';
 
 class CoffeeCard extends StatelessWidget {
   final Coffee coffee;
