@@ -5,7 +5,7 @@ import '../models/coffee_dto.dart';
 /// Remote data source for fetching coffee images from the API.
 /// Only responsible for API calls and returning DTOs.
 class CoffeeRemoteDataSource {
-  static const String _baseUrl = 'https://coffee.alexflipnote.dev';
+  static const String _baseUrl = 'https://corsproxy.io/?https://coffee.alexflipnote.dev';
 
   /// Fetches a single random coffee image from the API
   Future<CoffeeDto> fetchRandomCoffee() async {

@@ -25,17 +25,21 @@ class CoffeeDto {
 
   /// Converts DTO to domain entity
   Coffee toEntity({bool isFavorite = false}) {
+    final proxiedImageUrl = 'https://corsproxy.io/?$file';
+
     return Coffee(
       id: file.hashCode.toString(),
-      imageUrl: file,
+      imageUrl: proxiedImageUrl,
       isFavorite: isFavorite,
     );
   }
 
   /// Creates DTO from domain entity
   static CoffeeDto fromEntity(Coffee coffee) {
+    final originalUrl = coffee.imageUrl.replaceFirst('https://corsproxy.io/?', '');
+
     return CoffeeDto(
-      file: coffee.imageUrl,
+      file: originalUrl,
     );
   }
 }
